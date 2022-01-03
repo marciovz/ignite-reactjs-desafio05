@@ -1,1 +1,70 @@
-// TODO
+.homeHeaderContainer {
+  margin: 20px auto 20px;
+}
+
+.homeContainer {
+  max-width: 45rem;             // 720px
+  margin: 0 auto 70px;
+  padding: 10px;
+
+  button {
+    margin: 64px 0 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--Highlight);
+    background: var(--Background);
+    border: none;
+
+    &:hover {
+      filter: brightness(1.2)
+    }
+  }
+}
+
+
+.homePostItemList {
+  margin-top: 1rem;
+  h1 {
+    color: var(--Heading);
+    font-size: 1.75rem;             // 28px
+    font-weight: bold;              // 700
+  }
+
+  p {
+    margin-top: 8px;
+    color: var(--Body);
+    font-size: 1.125rem;            // 18px
+    font-weight: regular;
+  }
+
+  & + section {
+    margin-top: 48px;
+  }
+  
+  .info {
+    margin-top: 24px;
+    display: flex;
+    
+    div {
+      margin-right: 26px;
+      display: flex;
+      align-items: center;
+      
+      svg {
+        margin-right: 8px;
+        width: 1.25rem;                // 20px
+        height: 1.25rem;
+        color: var(--Info);
+      }
+      
+      time, span {
+        font-size: 0.875rem;          // 14px
+        font-weight: regular;         // 400
+        color: var(--Info);
+      }
+      
+    }
+    
+  }
+
+}
