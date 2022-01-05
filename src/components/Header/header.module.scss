@@ -1,19 +1,16 @@
 //TODO
 .headerContainer {
   width: 1120px;
-  height: 6.5rem;
+  height: 6.5rem;     // 104px
   margin: 0 auto;
-  border: 1px solid blue;
 }
 
 .headerContent {
   width: 720px;
-  height: 6.5rem;
+  height: 6.5rem;     // 104px
   margin: 0 auto;
   padding: 0 10px;
   
   display: flex;
   align-items: center;
-  
-  border: 1px solid red;
 }
