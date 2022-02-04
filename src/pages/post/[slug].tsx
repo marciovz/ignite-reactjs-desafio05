@@ -1,6 +1,8 @@
-import { GetStaticPaths, GetStaticProps } from 'next';
-import Prismic from '@prismicio/client';
 import { FiClock, FiUser, FiCalendar } from 'react-icons/fi';
+import { GetStaticPaths, GetStaticProps } from 'next';
+import Link from 'next/link';
+import Prismic from '@prismicio/client';
+import { RichText } from "prismic-dom";
 
 import { getPrismicClient } from '../../services/prismic';
 import Header from '../../components/Header';
@@ -29,30 +31,50 @@ interface PostProps {
   post: Post;
 }
 
-export default function Post() {
+export default function Post({ post }: PostProps) {
   // TODO
   return (
    <>
-      <Header />
-      <img src="" alt="" />
-      <main>
-        <article>
-          <h1>Titulo do post</h1>
-            <div className={styles.info}>
-              <div>
-                <FiCalendar />
-                <time>10 Jan 2022</time>
-              </div>
-              <div>
-                <FiUser />
-                <span>John Due</span>
-              </div>
-              <div>
-                <FiClock />
-                <time>4 min</time>
-              </div>
+      <Link href={`/`}>
+        <a>
+          <Header />
+        </a>
+      </Link>
+      <picture className={styles.banner}>
+        <img src={post.data.banner.url} alt={post.data.title} />
+      </picture>
+      <main className={commonStyles.container}>
+        <article className={styles.article}>
+          <h1>{post.data.title}</h1>
+          <div className={commonStyles.info}>
+            <div>
+              <FiCalendar />
+              <time>{post.first_publication_date}</time>
             </div>
+            <div>
+              <FiUser />
+              <span>{post.data.author}</span>
+            </div>
+            <div>
+              <FiClock />
+              <time>4 min</time>
+            </div>
+          </div>
 
+          <div className={styles.contentArticle}>
+            {post.data.content.map(content => (              
+              <>
+                <h2>{content.heading}</h2>
+                <div
+                  className={styles.postContent}
+                  dangerouslySetInnerHTML={{
+                    __html: RichText.asHtml(content.body),
+                  }}
+                />
+              </>             
+            ))}
+
+          </div>
         </article>
       </main>
    </>
@@ -90,6 +112,8 @@ export const getStaticProps: GetStaticProps = async context => {
 
   const response = await prismic.getByUID('post', String(slug), {});
   
+   console.log(response);
+
   const post = {
     first_publication_date: response.first_publication_date,
     data: {
@@ -98,10 +122,16 @@ export const getStaticProps: GetStaticProps = async context => {
         url: response.data.banner.url,
       },
       author: response.data.author,
-      content: response.data.content,
+      content:  response.data.content.map(content => (
+        {
+          heading: content.heading,
+          body: content.body,
+        }
+      )),
+      
     }
   }
-  
+ 
   return {
     props: {
       post
