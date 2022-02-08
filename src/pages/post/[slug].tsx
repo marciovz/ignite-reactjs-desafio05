@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { FiClock, FiUser, FiCalendar } from 'react-icons/fi';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
@@ -32,7 +33,18 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
-  // TODO
+  const [readingTime, setReadingTime] = useState(0);
+
+  useEffect(() => {
+    let totalWords = post.data.content.reduce((acc, content) => {
+       const numberHeadingWords = content.heading.split(' ').length;
+       const numberBodyWords = RichText.asText(content.body).split(' ').length
+      return acc + numberHeadingWords + numberBodyWords;
+    }, 0);
+
+    setReadingTime(Math.ceil(totalWords / 200));
+  }, [post]);
+
   return (
    <>
       <Link href={`/`}>
@@ -57,7 +69,7 @@ export default function Post({ post }: PostProps) {
             </div>
             <div>
               <FiClock />
-              <time>4 min</time>
+              <time>{readingTime} min</time>
             </div>
           </div>
 
