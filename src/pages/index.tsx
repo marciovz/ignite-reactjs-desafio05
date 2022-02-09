@@ -57,8 +57,10 @@ export default function Home({ postsPagination }: HomeProps ) {
 
   return (
     <>
-      <div className={styles.homeHeaderContainer}>
-        <Header />
+      <div className={commonStyles.container}>
+        <div className={styles.homeHeaderContainer}>
+          <Header />
+        </div>
       </div>
 
       <main className={styles.homeContainer}>

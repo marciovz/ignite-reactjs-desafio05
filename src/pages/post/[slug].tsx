@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FiClock, FiUser, FiCalendar } from 'react-icons/fi';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import Link from 'next/link';
 import Prismic from '@prismicio/client';
 import { RichText } from "prismic-dom";
 
@@ -47,11 +46,7 @@ export default function Post({ post }: PostProps) {
 
   return (
    <>
-      <Link href={`/`}>
-        <a>
-          <Header />
-        </a>
-      </Link>
+      <Header />
       <picture className={styles.banner}>
         <img src={post.data.banner.url} alt={post.data.title} />
       </picture>
@@ -75,7 +70,7 @@ export default function Post({ post }: PostProps) {
 
           <div className={styles.contentArticle}>
             {post.data.content.map(content => (              
-              <>
+              <div key={content.heading}>
                 <h2>{content.heading}</h2>
                 <div
                   className={styles.postContent}
@@ -83,7 +78,7 @@ export default function Post({ post }: PostProps) {
                     __html: RichText.asHtml(content.body),
                   }}
                 />
-              </>             
+              </div>             
             ))}
 
           </div>
@@ -124,12 +119,10 @@ export const getStaticProps: GetStaticProps = async context => {
 
   const response = await prismic.getByUID('post', String(slug), {});
   
-   console.log(response);
-
   const post = {
-    first_publication_date: response.first_publication_date,
     data: {
       title: response.data.title,
+      subtitle: response.data.subtitle,
       banner: {
         url: response.data.banner.url,
       },
@@ -141,7 +134,9 @@ export const getStaticProps: GetStaticProps = async context => {
         }
       )),
       
-    }
+    },
+    first_publication_date: response.first_publication_date,
+    uid: response.uid
   }
  
   return {
