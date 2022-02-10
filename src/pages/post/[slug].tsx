@@ -145,7 +145,6 @@ export const getStaticProps: GetStaticProps = async context => {
     },
     first_publication_date: response.first_publication_date,
     uid: response.uid,
-//    formated_first_publication_date: formatShorDate(response.first_publication_date),
   }
  
   return {

@@ -12,13 +12,14 @@ import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import { useState } from 'react';
 
-
 interface Post {
-  slug: string;
-  title: string;
-  subtitle: string;
-  updatedAt: string;
-  author: string;
+  uid?: string;
+  first_publication_date: string | null;
+  data: {
+    title: string;
+    subtitle: string;
+    author: string;
+  };
 }
 
 interface PostPagination {
@@ -43,11 +44,13 @@ export default function Home({ postsPagination }: HomeProps ) {
           setPosts(oldPosts => [
             ...oldPosts,
             {
-              slug: post.uid,
-              title: post.data.title,
-              subtitle: post.data.subtitle,
-              updatedAt: formatShorDate(post.last_publication_date),
-              author: post.data.author
+              uid: post.uid,
+              first_publication_date: post.first_publication_date,
+              data: {
+                title: post.data.title,
+                subtitle: post.data.subtitle,
+                author: post.data.author
+              }
             }
           ])
         })
@@ -65,19 +68,19 @@ export default function Home({ postsPagination }: HomeProps ) {
 
       <main className={styles.homeContainer}>
         { posts.map(post => (
-          <section key={post.slug} className={styles.homePostItemList}>
-            <Link href={`/post/${post.slug}`}>
+          <section key={post.uid} className={styles.homePostItemList}>
+            <Link href={`/post/${post.uid}`}>
               <a>
-                <h1>{post.title}</h1>
-                <p>{post.subtitle}</p>
+                <h1>{post.data.title}</h1>
+                <p>{post.data.subtitle}</p>
                 <div className={commonStyles.info}>
                   <div>
                     <FiCalendar />
-                    <time>{post.updatedAt}</time>
+                    <time>{formatShorDate(post.first_publication_date)}</time>
                   </div>
                   <div>
                     <FiUser />
-                    <span>{post.author}</span>
+                    <span>{post.data.author}</span>
                   </div>
                 </div>
               </a>
@@ -107,22 +110,11 @@ export const getStaticProps: GetStaticProps = async () => {
     pageSize: 2,
   });
 
-  // Creates the post objects with only the required items
-  const posts = response.results.map(post => {
-    return {
-      slug: post.uid,
-      title: post.data.title,
-      subtitle: post.data.subtitle,
-      updatedAt: formatShorDate(post.last_publication_date),
-      author: post.data.author,
-    }
-  });
-
   return {
     props: {
       postsPagination: {
         next_page: response.next_page,
-        results: posts
+        results: response.results
       }
     }
   }
