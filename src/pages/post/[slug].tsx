@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { FiClock, FiUser, FiCalendar } from 'react-icons/fi';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 import Prismic from '@prismicio/client';
 import { RichText } from "prismic-dom";
 
 import { getPrismicClient } from '../../services/prismic';
 import Header from '../../components/Header';
+import formatShorDate from '../../Utils/formatToShortDate';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
@@ -34,6 +36,12 @@ interface PostProps {
 export default function Post({ post }: PostProps) {
   const [readingTime, setReadingTime] = useState(0);
 
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <h1>Carregando...</h1>;
+  }
+
   useEffect(() => {
     let totalWords = post.data.content.reduce((acc, content) => {
        const numberHeadingWords = content.heading.split(' ').length;
@@ -56,7 +64,7 @@ export default function Post({ post }: PostProps) {
           <div className={commonStyles.info}>
             <div>
               <FiCalendar />
-              <time>{post.first_publication_date}</time>
+              <time>{formatShorDate(post.first_publication_date)}</time>
             </div>
             <div>
               <FiUser />
@@ -136,7 +144,8 @@ export const getStaticProps: GetStaticProps = async context => {
       
     },
     first_publication_date: response.first_publication_date,
-    uid: response.uid
+    uid: response.uid,
+//    formated_first_publication_date: formatShorDate(response.first_publication_date),
   }
  
   return {
