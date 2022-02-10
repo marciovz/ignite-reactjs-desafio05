@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { FiClock, FiUser, FiCalendar } from 'react-icons/fi';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
@@ -34,22 +34,20 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
-  const [readingTime, setReadingTime] = useState(0);
-
   const router = useRouter();
 
   if (router.isFallback) {
     return <h1>Carregando...</h1>;
   }
 
-  useEffect(() => {
+  const readingTime = useCallback(() => {
     let totalWords = post.data.content.reduce((acc, content) => {
-       const numberHeadingWords = content.heading.split(' ').length;
-       const numberBodyWords = RichText.asText(content.body).split(' ').length
+      const numberHeadingWords = content.heading?.split(' ').length | 0;
+      const numberBodyWords = RichText.asText(content.body)?.split(' ').length | 0;
       return acc + numberHeadingWords + numberBodyWords;
     }, 0);
 
-    setReadingTime(Math.ceil(totalWords / 200));
+    return Math.ceil(totalWords / 200) ;
   }, [post]);
 
   return (
@@ -72,7 +70,7 @@ export default function Post({ post }: PostProps) {
             </div>
             <div>
               <FiClock />
-              <time>{readingTime} min</time>
+              <time>{readingTime()} min</time>
             </div>
           </div>
 
